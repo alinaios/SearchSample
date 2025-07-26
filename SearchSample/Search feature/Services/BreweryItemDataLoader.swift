@@ -10,5 +10,5 @@ import Foundation
 public protocol BreweryItemDataLoader {
     typealias SearchResult = Swift.Result<[BreweryItem], Error>
    
-    func load(completion: @escaping (SearchResult) -> Void)
+    func load(query: String?, completion: @escaping (SearchResult) -> Void)
 }

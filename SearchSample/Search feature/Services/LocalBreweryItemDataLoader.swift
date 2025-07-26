@@ -14,7 +14,7 @@ public final class LocalBreweryItemDataLoader: BreweryItemDataLoader {
         self.context = context
     }
 
-    public func load(completion: @escaping (SearchResult) -> Void) {
+    public func load(query: String?, completion: @escaping (SearchResult) -> Void) {
         do {
             let entities = try context.fetch(FetchDescriptor<BreweryItemEntity>())
             let items = entities.map { entity in
