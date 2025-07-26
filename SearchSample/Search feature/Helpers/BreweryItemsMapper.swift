@@ -8,49 +8,59 @@
 import Foundation
 
 public final class BreweryItemsMapper {
-    private struct Root: Decodable {
-        private let items: [RemoteBreweryItem]
-        
-        private struct RemoteBreweryItem: Codable {
-            let id: String
-            let name: String
-            let breweryType: String
-            let address1: String?
-            let address2: String?
-            let address3: String?
-            let city: String
-            let stateProvince: String?
-            let postalCode: String
-            let country: String
-            let longitude: Double?
-            let latitude: Double?
-            let phone: String?
-            let websiteURL: String?
-            let state: String?
-            let street: String?
-            
-            enum CodingKeys: String, CodingKey {
-                case id
-                case name
-                case breweryType = "brewery_type"
-                case address1 = "address_1"
-                case address2 = "address_2"
-                case address3 = "address_3"
-                case city
-                case stateProvince = "state_province"
-                case postalCode = "postal_code"
-                case country
-                case longitude
-                case latitude
-                case phone
-                case websiteURL = "website_url"
-                case state
-                case street
-            }
+    private struct RemoteBreweryItem: Decodable {
+        let id: UUID
+        let name: String
+        let breweryType: String
+        let address1: String?
+        let address2: String?
+        let address3: String?
+        let city: String
+        let stateProvince: String?
+        let postalCode: String
+        let country: String
+        let longitude: Double?
+        let latitude: Double?
+        let phone: String?
+        let websiteURL: String?
+        let state: String?
+        let street: String?
+
+        enum CodingKeys: String, CodingKey {
+            case id
+            case name
+            case breweryType = "brewery_type"
+            case address1 = "address_1"
+            case address2 = "address_2"
+            case address3 = "address_3"
+            case city
+            case stateProvince = "state_province"
+            case postalCode = "postal_code"
+            case country
+            case longitude
+            case latitude
+            case phone
+            case websiteURL = "website_url"
+            case state
+            case street
         }
-        
-        var results: [BreweryItem] {
-            items.map {
+    }
+
+    public enum Error: Swift.Error {
+        case invalidData
+    }
+
+    public static func map(_ data: Data, from response: HTTPURLResponse) throws -> [BreweryItem] {
+        guard response.isOK else {
+            print("❌ Invalid HTTP response code: \(response.statusCode)")
+            throw Error.invalidData
+        }
+
+        do {
+            let remoteItems = try JSONDecoder().decode([RemoteBreweryItem].self, from: data)
+            print("✅ Successfully decoded \(remoteItems.count) brewery items.")
+            
+            return remoteItems.map {
                 BreweryItem(
                     id: $0.id,
                     name: $0.name,
@@ -70,17 +80,17 @@ public final class BreweryItemsMapper {
                     street: $0.street
                 )
             }
-        }
-    }
-    
-    public enum Error: Swift.Error {
-        case invalidData
-    }
-    
-    public static func map(_ data: Data, from response: HTTPURLResponse) throws -> [BreweryItem] {
-        guard response.isOK, let root = try? JSONDecoder().decode(Root.self, from: data) else {
+        } catch {
+            print("❌ Failed to decode BreweryItem list: \(error.localizedDescription)")
+            
+            if let rawJSON = String(data: data, encoding: .utf8) {
+                print("🔍 Raw JSON:\n\(rawJSON)")
+            } else {
+                print("⚠️ Could not decode data to UTF-8 string for inspection.")
+            }
+
             throw Error.invalidData
         }
-        return root.results
     }
+
 }
