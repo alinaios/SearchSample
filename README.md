@@ -65,4 +65,6 @@ _So I can view my search history even after restarting the app._
 - **Then** the app should display an error message indicating that results cannot be retrieved  
 
 ---
+## **Flow Chart of Search and History Feature**
+<img width="574" height="519" alt="Screenshot 2025-07-26 at 14 38 39" src="https://github.com/user-attachments/assets/d8ac3e14-f1af-4e58-a06d-23ed756fa350" />
 
