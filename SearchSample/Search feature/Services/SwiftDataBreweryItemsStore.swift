@@ -10,19 +10,18 @@ import SwiftData
 
 public final class SwiftDataBreweryItemsStore: BreweryItemsStore {
     private let context: ModelContext
-    
+
     public init(context: ModelContext) {
         self.context = context
     }
-    
+
     public func deleteCachedFeed() throws {
         try deleteAll(BreweryItemEntity.self)
     }
-    
+
     public func insert(_ feed: [BreweryItem], timestamp: Date) throws {
         try deleteCachedFeed()
-        
-        // Save brewery items
+
         for item in feed {
             let entity = BreweryItemEntity(
                 id: item.id,
@@ -40,44 +39,42 @@ public final class SwiftDataBreweryItemsStore: BreweryItemsStore {
                 phone: item.phone,
                 websiteURL: item.websiteURL,
                 state: item.state,
-                street: item.street
+                street: item.street,
+                timestamp: timestamp
             )
             context.insert(entity)
         }
-        
-        // Save timestamp
-        context.insert(CachedFeedMetadata(timestamp: timestamp))
+
         try context.save()
     }
-    
+
     public func retrieve() throws -> CachedFeed? {
-        let items = try context.fetch(FetchDescriptor<BreweryItemEntity>())
-        guard !items.isEmpty else { return nil }
-        
-        let metadata = try context.fetch(FetchDescriptor<CachedFeedMetadata>()).first
+        let descriptor = FetchDescriptor<BreweryItemEntity>(
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        )
+
+        let items = try context.fetch(descriptor)
+
+        // Deduplicate by ID, keeping only the latest entry per ID
+        var seen = Set<UUID>()
+        let uniqueItems = items.filter { item in
+            guard !seen.contains(item.id) else { return false }
+            seen.insert(item.id)
+            return true
+        }
+
         return CachedFeed(
-            feed: items.map { $0.toModel() },
-            timestamp: metadata?.timestamp ?? .distantPast
+            feed: uniqueItems.map { $0.toModel() },
+            timestamp: uniqueItems.first?.timestamp ?? .distantPast
         )
     }
-    
+
     // MARK: - Helpers
-    
+
     private func deleteAll<T: PersistentModel>(_ type: T.Type) throws {
         let items = try context.fetch(FetchDescriptor<T>())
         for item in items {
             context.delete(item)
         }
-    }
-}
-
-@Model
-final class CachedFeedMetadata {
-    @Attribute(.unique) var key: String
-    var timestamp: Date
-
-    init(key: String = "feed", timestamp: Date) {
-        self.key = key
-        self.timestamp = timestamp
     }
 }

@@ -9,7 +9,7 @@ import SwiftData
 import Foundation
 
 @Model
-public class BreweryItemEntity {
+public class BreweryItemEntity: IdentifiableEntity {
     @Attribute(.unique) public var id: UUID
     public var name: String
     public var breweryType: String
@@ -27,6 +27,7 @@ public class BreweryItemEntity {
     public var websiteURL: String?
     public var state: String?
     public var street: String?
+    public var timestamp: Date?
 
     public init(
         id: UUID,
@@ -44,7 +45,8 @@ public class BreweryItemEntity {
         phone: String? = nil,
         websiteURL: String? = nil,
         state: String? = nil,
-        street: String? = nil
+        street: String? = nil,
+        timestamp: Date? = nil
     ) {
         self.id = id
         self.name = name
@@ -62,6 +64,7 @@ public class BreweryItemEntity {
         self.websiteURL = websiteURL
         self.state = state
         self.street = street
+        self.timestamp = timestamp
     }
 }
 extension BreweryItemEntity {
@@ -85,4 +88,7 @@ extension BreweryItemEntity {
             street: self.street
         )
     }
+}
+protocol IdentifiableEntity {
+    var id: UUID { get }
 }

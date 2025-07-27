@@ -17,12 +17,12 @@ struct SearchSampleApp: App {
 
     init() {
         // 1. Setup SwiftData container and context
-        let schema = Schema([BreweryItemEntity.self, CachedFeedMetadata.self])
+        let schema = Schema([BreweryItemEntity.self])
         container = try! ModelContainer(for: schema, configurations: [])
         context = ModelContext(container)
 
         // 2. Setup network client
-        guard let url = URL(string: "https://api.openbrewerydb.org/v1/breweries?per_page=5") else {
+        guard let url = URL(string: "https://api.openbrewerydb.org/v1/breweries/search?query") else {
             fatalError("Invalid Brewery API URL")
         }
 
