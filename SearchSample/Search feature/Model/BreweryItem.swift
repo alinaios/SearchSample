@@ -24,7 +24,7 @@ public struct BreweryItem: Hashable {
     public let websiteURL: String?
     public let state: String?
     public let street: String?
-
+    
     public init(
         id: UUID,
         name: String,
@@ -59,5 +59,21 @@ public struct BreweryItem: Hashable {
         self.websiteURL = websiteURL
         self.state = state
         self.street = street
+    }
+    
+    public var formattedLocation: String {
+        let trimmedStreet = street?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedState = state?.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        switch (trimmedStreet, trimmedState) {
+        case let (s?, st?) where !s.isEmpty && !st.isEmpty:
+            return "\(s), \(st)"
+        case let (s?, _) where !s.isEmpty:
+            return s
+        case let (_, st?) where !st.isEmpty:
+            return st
+        default:
+            return ""
+        }
     }
 }

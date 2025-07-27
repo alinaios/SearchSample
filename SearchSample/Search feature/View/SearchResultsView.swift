@@ -15,38 +15,51 @@ struct SearchResultsView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            ForEach(items, id: \.id) { brewery in
-                Button {
-                    onSelect(brewery)
-                } label: {
-                    HStack {
-                        Text("\(brewery.street ?? ""), \(brewery.state ?? "")")
-                            .applyTextStyle(.subtitleSemiBold16, color: Color.primaryContent)
-                            .padding(.vertical, Spacing.medium)
-                        Spacer()
+            VStack(spacing: Spacing.smallMedium) {
+                ForEach(items, id: \.id) { brewery in
+                    SearchResultRowView(brewery: brewery) {
+                        onSelect(brewery)
                     }
                 }
-            }
 
-            if isShowingAll {
-                Button(action: {
-                    onShowMore()
-                }) {
-                    Text("Show more")
-                        .applyTextStyle(.labelMedium16, color: Color.disabledContent)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, Spacing.smallMedium)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: CornerRadius.full)
-                                .stroke(Color.gray, lineWidth: 1)
-                        )
+                if isShowingAll {
+                    showMoreButton
                 }
-                .padding(.bottom)
             }
         }
         .padding(.horizontal, Spacing.large)
-        .frame(maxWidth: .infinity, maxHeight: 268)
+        .frame(maxWidth: .infinity, maxHeight: 330)
         .background(Color.backgroundSecondary)
-        .cornerRadius(6)
+        .cornerRadius(CornerRadius.small)
+    }
+
+    private var showMoreButton: some View {
+        Button("Show more", action: onShowMore)
+            .applyTextStyle(.labelMedium16, color: Color.disabledContent)
+            .frame(maxWidth: .infinity)
+            .frame(height: 44)
+            .background(Color.clear)
+            .overlay(
+                RoundedRectangle(cornerRadius: CornerRadius.full)
+                    .stroke(Color.innerAlignment, lineWidth: 1)
+            )
+            .padding(.bottom)
+    }
+}
+
+private struct SearchResultRowView: View {
+    let brewery: BreweryItem
+    let onSelect: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            HStack {
+                Text(brewery.formattedLocation)
+                    .applyTextStyle(.subtitleSemiBold16, color: Color.primaryContent)
+                    .padding(.vertical, Spacing.medium)
+                Spacer()
+            }
+        }
+        .contentShape(Rectangle()) 
     }
 }

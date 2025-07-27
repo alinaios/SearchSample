@@ -15,20 +15,7 @@ struct BrewerySearchView: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 31) {
                 headerView
-                
-                VStack(alignment: .leading, spacing: Spacing.medium) {
-                    SearchBarView(query: $query) {
-                        viewModel.fetch(query: query)
-                    }
-                    
-                    contentView
-                    
-                    HistoryListView(history: viewModel.history)
-                        .padding(.top, 41)
-                }
-                .padding(.horizontal)
-                
-                Spacer()
+                searchSection
             }
             .onAppear {
                 viewModel.send(event: .onAppear)
@@ -38,17 +25,32 @@ struct BrewerySearchView: View {
     }
     
     private var headerView: some View {
-        VStack (spacing: Spacing.xLarge){
+        VStack(spacing: Spacing.xLarge) {
             Image(.searchIcon)
                 .frame(width: 197)
                 .padding(.top, 94)
             
             Image(.sliderIcon)
                 .frame(height: 10)
+            
             Text("Search for a brewery")
                 .applyTextStyle(.titleLarge, color: Color.primaryContent)
                 .frame(height: 41)
         }
+    }
+    
+    private var searchSection: some View {
+        VStack(alignment: .leading, spacing: Spacing.medium) {
+            SearchBarView(query: $query) {
+                viewModel.fetch(query: query)
+            }
+
+            contentView
+
+            HistoryListView(history: viewModel.history)
+                .padding(.top, 41)
+        }
+        .padding(.horizontal)
     }
     
     @ViewBuilder
@@ -58,6 +60,7 @@ struct BrewerySearchView: View {
             ProgressView()
             
         case .loadedList(let results):
+            
             SearchResultsView(
                 items: results,
                 isShowingAll: viewModel.isShowingAll,

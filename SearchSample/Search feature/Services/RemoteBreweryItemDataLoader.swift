@@ -30,8 +30,6 @@ public final class RemoteBreweryItemDataLoader: BreweryItemDataLoader {
             return
         }
         
-        print("finalURL = ", finalURL)
-
         client.get(from: finalURL) { [weak self] response in
             guard self != nil else { return }
 

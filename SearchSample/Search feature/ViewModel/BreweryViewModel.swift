@@ -15,61 +15,37 @@ final class BreweryViewModel: ObservableObject {
     private let store: BreweryItemsStore
     private var allResults: [BreweryItem] = []
     private(set) var isShowingAll = false
-
+    
     init(service: BreweryItemDataLoader, store: BreweryItemsStore) {
         self.service = service
         self.store = store
     }
-
+    
     func fetch(query: String? = nil) {
-        let trimmedQuery = query?.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let query = trimmedQuery, !query.isEmpty else {
-            DispatchQueue.main.async {
-                self.state = .noQuery
-                self.allResults = []
-                self.isShowingAll = false
-            }
+        guard let query = isValidQuery(query) else {
+            state = .noQuery
+            allResults = []
+            isShowingAll = false
             return
         }
-
+        
         state = .loadingList
         service.load(query: query) { [weak self] result in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let items):
-                    if items.isEmpty {
-                        self.state = .noResults("No breweries found for your search.")
-                        self.allResults = []
-                        self.isShowingAll = false
-                    } else {
-                        self.allResults = Array(items.prefix(10))
-                        self.state = .loadedList(Array(self.allResults.prefix(5)))
-                        self.isShowingAll = true
-                    }
-                case .failure(let error):
-                    var errorMessage = ""
-                    if let customError = error as? RemoteBreweryItemDataLoader.LoaderError {
-                        switch customError {
-                        case .connectivity:
-                            errorMessage = "No internet connection"
-                        case .invalidData:
-                            errorMessage = "Invalid data format"
-                        case .invalidURL:
-                            errorMessage = "Malformed URL"
-                        }
-                    }
-                    self.state = .error(errorMessage)
-                }
+            switch result {
+            case .success(let items):
+                self.updateState(for: items)
+            case .failure(let error):
+                self.state = .error(self.errorMessage(from: error))
             }
         }
     }
-
+    
     func showAllResults() {
         state = .loadedList(allResults)
         isShowingAll = true
     }
-
+    
     func insertToStore(_ item: BreweryItem) {
         do {
             try store.insert([item], timestamp: Date())
@@ -80,7 +56,7 @@ final class BreweryViewModel: ObservableObject {
             print("Store error: \(error)")
         }
     }
-
+    
     func loadHistory() {
         do {
             if let cached = try store.retrieve() {
@@ -94,7 +70,7 @@ final class BreweryViewModel: ObservableObject {
             self.history = []
         }
     }
-
+    
     func send(event: Event) {
         switch event {
         case .onAppear:
@@ -102,7 +78,7 @@ final class BreweryViewModel: ObservableObject {
             fetch()
         }
     }
-
+    
     enum State {
         case loadingList
         case loadedList([BreweryItem])
@@ -110,8 +86,44 @@ final class BreweryViewModel: ObservableObject {
         case noQuery
         case error(String)
     }
-
+    
     enum Event {
         case onAppear
+    }
+    
+    private func errorMessage(from error: Error) -> String {
+        if let customError = error as? RemoteBreweryItemDataLoader.LoaderError {
+            switch customError {
+            case .connectivity:
+                return "No internet connection"
+            case .invalidData:
+                return "Invalid data format"
+            case .invalidURL:
+                return "Malformed URL"
+            }
+        }
+        return "Something went wrong"
+    }
+    
+    private func isValidQuery(_ query: String?) -> String? {
+        guard let trimmed = query?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmed.isEmpty else {
+            return nil
+        }
+        return trimmed
+    }
+    
+    
+    private func updateState(for items: [BreweryItem]) {
+        DispatchQueue.main.async {
+            if items.isEmpty {
+                self.state = .noResults("No breweries found for your search.")
+                self.allResults = []
+                self.isShowingAll = false
+            } else {
+                self.allResults = Array(items.prefix(10))
+                self.state = .loadedList(Array(self.allResults.prefix(5)))
+                self.isShowingAll = true
+            }
+        }
     }
 }
