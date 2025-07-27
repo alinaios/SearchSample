@@ -20,9 +20,11 @@ public final class SwiftDataBreweryItemsStore: BreweryItemsStore {
     }
 
     public func insert(_ feed: [BreweryItem], timestamp: Date) throws {
-        try deleteCachedFeed()
+        // Optional: fetch existing items to avoid duplicates
+        let existing = try retrieve()?.feed ?? []
+        let existingIDs = Set(existing.map { $0.id })
 
-        for item in feed {
+        for item in feed where !existingIDs.contains(item.id) {
             let entity = BreweryItemEntity(
                 id: item.id,
                 name: item.name,

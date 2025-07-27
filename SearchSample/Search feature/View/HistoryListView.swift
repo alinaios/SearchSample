@@ -21,7 +21,7 @@ struct HistoryListView: View {
                     Text("History")
                         .applyTextStyle(.headlineBold16, color: Color.primaryContent)
                     
-                    ForEach(history.prefix(5), id: \.0.id) { brewery, date in
+                    ForEach(history, id: \.0.id) { brewery, date in
                         HistoryItemView(brewery: brewery, date: date)
                     }
                 }
