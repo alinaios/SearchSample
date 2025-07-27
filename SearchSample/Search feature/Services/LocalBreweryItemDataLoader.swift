@@ -7,7 +7,7 @@
 
 import SwiftData
 
-public final class LocalBreweryItemDataLoader: BreweryItemDataLoader {
+public final class LocalBreweryItemDataLoader: BreweryItemDataLoader {    
     private let context: ModelContext
 
     public init(context: ModelContext) {

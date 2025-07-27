@@ -10,27 +10,33 @@ import SwiftUI
 struct BrewerySearchView: View {
     @ObservedObject var viewModel: BreweryViewModel
     @State private var query: String = ""
-    
+
     var body: some View {
-        VStack(spacing: 24) {
-            headerView
-            VStack(alignment: .leading, spacing: Spacing.medium) {
-                SearchBarView(query: $query) {
-                    viewModel.fetch(query: query)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 24) {
+                headerView
+
+                VStack(alignment: .leading, spacing: Spacing.medium) {
+                    SearchBarView(query: $query) {
+                        viewModel.fetch(query: query)
+                    }
+
+                    contentView
+
+                    HistoryListView(history: viewModel.history)
+                        .padding(.top, 41)
                 }
-                contentView
-                HistoryListView(history: viewModel.history)
-                    .padding(.top, 41)
+                .padding(.horizontal)
+
+                Spacer()
             }
-            .padding(.horizontal)
-            Spacer()
+            .onAppear {
+                viewModel.send(event: .onAppear)
+            }
         }
         .background(Color.backgroundPrimary)
-        .onAppear {
-            viewModel.send(event: .onAppear)
-        }
     }
-    
+
     private var headerView: some View {
         VStack(spacing: Spacing.medium) {
             Image(.searchIcon)
@@ -46,34 +52,31 @@ struct BrewerySearchView: View {
                 .applyTextStyle(.titleLarge, color: Color.primaryContent)
         }
     }
-    
+
     @ViewBuilder
     private var contentView: some View {
         switch viewModel.state {
         case .loadingList:
-            ProgressView("Loading...")
-                .padding(.top)
+            ProgressView()
 
-        case .loadedList(let items):
-            if items.isEmpty && query.isEmpty {
-                EmptyView()
-            } else if items.isEmpty {
-                Text("No results found")
-                    .foregroundColor(.secondary)
-                    .padding(.top)
-            } else {
-                SearchResultsView(
-                    items: items,
-                    isShowingAll: viewModel.isShowingAll,
-                    onSelect: { viewModel.insertToStore($0) },
-                    onShowMore: { viewModel.showAllResults() }
-                )
-            }
+        case .loadedList(let results):
+            SearchResultsView(
+                items: results,
+                isShowingAll: viewModel.isShowingAll,
+                onSelect: { viewModel.insertToStore($0) },
+                onShowMore: { viewModel.showAllResults() }
+            )
 
-        case .error:
-            Text("Something went wrong. Please try again.")
-                .foregroundColor(.red)
-                .padding()
+        case .noQuery:
+            EmptyView()
+
+        case .noResults(let message):
+            Text(message)
+                .applyTextStyle(.subtitleSemiBold16, color: Color.disabledContent)
+
+        case .error(let message):
+            Text(message)
+                .applyTextStyle(.bodyRegular13, color: Color.red)
         }
     }
 }

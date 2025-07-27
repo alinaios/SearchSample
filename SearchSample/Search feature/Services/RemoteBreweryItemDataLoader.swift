@@ -8,14 +8,16 @@
 import Foundation
 
 public final class RemoteBreweryItemDataLoader: BreweryItemDataLoader {
+    public typealias Failure = LoaderError
+
     private let url: URL
     private let client: HTTPClient
     
-    public enum Error: Swift.Error {
-        case connectivity
-        case invalidData
-        case invalidURL
-    }
+    public enum LoaderError: Swift.Error {
+           case connectivity
+           case invalidData
+           case invalidURL
+       }
     
     public init(url: URL, client: HTTPClient) {
         self.url = url
@@ -24,9 +26,11 @@ public final class RemoteBreweryItemDataLoader: BreweryItemDataLoader {
     
     public func load(query: String?, completion: @escaping (SearchResult) -> Void) {
         guard let finalURL = makeURL(with: query) else {
-            completion(.failure(Error.invalidURL))
+            completion(.failure(LoaderError.invalidURL))
             return
         }
+        
+        print("finalURL = ", finalURL)
 
         client.get(from: finalURL) { [weak self] response in
             guard self != nil else { return }
@@ -37,11 +41,11 @@ public final class RemoteBreweryItemDataLoader: BreweryItemDataLoader {
                     let items = try BreweryItemsMapper.map(data, from: response)
                     completion(.success(items))
                 } catch {
-                    completion(.failure(error))
+                    completion(.failure(LoaderError.invalidData))
                 }
 
             case .failure:
-                completion(.failure(Error.connectivity))
+                completion(.failure(LoaderError.connectivity))
             }
         }
     }
