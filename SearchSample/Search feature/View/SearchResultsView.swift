@@ -35,7 +35,7 @@ struct SearchResultsView: View {
                     Text("Show more")
                         .applyTextStyle(.labelMedium16, color: Color.disabledContent)
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.vertical, Spacing.smallMedium)
                         .overlay(
                             RoundedRectangle(cornerRadius: CornerRadius.full)
                                 .stroke(Color.gray, lineWidth: 1)
@@ -45,7 +45,7 @@ struct SearchResultsView: View {
             }
         }
         .padding(.horizontal, Spacing.large)
-        .frame(maxWidth: .infinity, maxHeight: 500)
+        .frame(maxWidth: .infinity, maxHeight: 268)
         .background(Color.backgroundSecondary)
         .cornerRadius(6)
     }
