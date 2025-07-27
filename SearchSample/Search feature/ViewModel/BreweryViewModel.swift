@@ -10,9 +10,11 @@ import Foundation
 final class BreweryViewModel: ObservableObject {
     @Published private(set) var state = State.loadingList
     private let service: BreweryItemDataLoader
-
-    init(service: BreweryItemDataLoader) {
+    private let store: BreweryItemsStore
+    
+    init(service: BreweryItemDataLoader, store: BreweryItemsStore) {
         self.service = service
+        self.store = store
     }
 
     func fetch(query: String? = nil) {

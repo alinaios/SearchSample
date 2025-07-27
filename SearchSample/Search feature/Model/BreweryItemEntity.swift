@@ -64,3 +64,25 @@ public class BreweryItemEntity {
         self.street = street
     }
 }
+extension BreweryItemEntity {
+    func toModel() -> BreweryItem {
+        BreweryItem(
+            id: self.id,
+            name: self.name,
+            breweryType: self.breweryType,
+            address1: self.address1,
+            address2: self.address2,
+            address3: self.address3,
+            city: self.city,
+            stateProvince: self.stateProvince,
+            postalCode: self.postalCode,
+            country: self.country,
+            longitude: self.longitude,
+            latitude: self.latitude,
+            phone: self.phone,
+            websiteURL: self.websiteURL,
+            state: self.state,
+            street: self.street
+        )
+    }
+}

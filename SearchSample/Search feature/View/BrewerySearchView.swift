@@ -32,7 +32,7 @@ struct BrewerySearchView: View {
                 .cornerRadius(10)
                 .padding(.horizontal)
                 .onSubmit {
-                    viewModel.fetch() // could pass query to viewModel if needed
+                    viewModel.fetch()
                 }
 
             // Results
@@ -76,6 +76,6 @@ struct BrewerySearchView: View {
     }
 }
 #Preview {
-    BrewerySearchView(viewModel: .init(service: MockBreweryService()))
+    BrewerySearchView(viewModel: .init(service: MockBreweryService(), store: MockBreweryItemsStore()))
 }
 
