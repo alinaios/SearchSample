@@ -1,5 +1,6 @@
-**BDD Specifications for Search and History Feature
-_**Story N1: User wants to search anything_
+**BDD Specifications for Search and History Feature**
+
+_**Story N1: User wants to search anything**_
 
 Narrative:
 As a user,
