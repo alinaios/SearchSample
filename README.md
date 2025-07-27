@@ -68,3 +68,9 @@ _So I can view my search history even after restarting the app._
 ## **Flow Chart of Search and History Feature**
 <img width="574" height="519" alt="Screenshot 2025-07-26 at 14 38 39" src="https://github.com/user-attachments/assets/d8ac3e14-f1af-4e58-a06d-23ed756fa350" />
 
+## **Current WIP video**
+
+https://github.com/user-attachments/assets/481e3633-cbed-47ae-9e81-e2c76952dcf4
+
+
+
