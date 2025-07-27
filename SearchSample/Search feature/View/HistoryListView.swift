@@ -16,13 +16,13 @@ struct HistoryListView: View {
 
         return AnyView(
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: Spacing.medium) {
                     Text("History")
                         .applyTextStyle(.headlineBold16, color: Color.primaryContent)
 
                     ForEach(history.prefix(5), id: \.0.id) { (brewery, date) in
                         HStack {
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: Spacing.small) {
                                 Text(brewery.name)
                                     .applyTextStyle(.bodyRegular16, color: Color.primaryContent)
                                 Text(date.formatted(date: .numeric, time: .shortened))

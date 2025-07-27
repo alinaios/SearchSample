@@ -22,7 +22,7 @@ struct SearchResultsView: View {
                     HStack {
                         Text("\(brewery.street ?? ""), \(brewery.state ?? "")")
                             .applyTextStyle(.subtitleSemiBold16, color: Color.primaryContent)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, Spacing.medium)
                         Spacer()
                     }
                 }
@@ -37,14 +37,14 @@ struct SearchResultsView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .overlay(
-                            RoundedRectangle(cornerRadius: 50)
+                            RoundedRectangle(cornerRadius: CornerRadius.full)
                                 .stroke(Color.gray, lineWidth: 1)
                         )
                 }
                 .padding(.bottom)
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, Spacing.large)
         .frame(maxWidth: .infinity, maxHeight: 500)
         .background(Color.backgroundSecondary)
         .cornerRadius(6)

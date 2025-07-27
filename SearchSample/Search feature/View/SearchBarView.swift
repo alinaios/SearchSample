@@ -16,17 +16,17 @@ struct SearchBarView: View {
             if query.isEmpty {
                 Text("Search...")
                     .applyTextStyle(.subtitleSemiBold16, color: Color.disabledContent)
-                    .padding(.horizontal, 17)
+                    .padding(.horizontal, Spacing.large)
             }
             
             TextField("", text: $query)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 17)
+                .padding(.vertical, Spacing.medium)
+                .padding(.horizontal, Spacing.large)
                 .applyTextStyle(.subtitleSemiBold16, color: Color.primaryContent)
                 .frame(height: 50)
-                .cornerRadius(6)
+                .cornerRadius(CornerRadius.small)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: CornerRadius.small)
                         .stroke(Color.gray, lineWidth: 1)
                 )
                 .opacity(1)

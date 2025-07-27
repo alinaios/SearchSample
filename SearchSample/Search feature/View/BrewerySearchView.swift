@@ -14,7 +14,7 @@ struct BrewerySearchView: View {
     var body: some View {
         VStack(spacing: 24) {
             headerView
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: Spacing.medium) {
                 SearchBarView(query: $query) {
                     viewModel.fetch(query: query)
                 }
@@ -32,7 +32,7 @@ struct BrewerySearchView: View {
     }
     
     private var headerView: some View {
-        VStack(spacing: 12){
+        VStack(spacing: Spacing.medium) {
             Image(.searchIcon)
                 .frame(width: 197)
                 .padding(.top, 94)
