@@ -14,7 +14,7 @@ final class BreweryViewModel: ObservableObject {
     private let service: BreweryItemDataLoader
     private let store: BreweryItemsStore
     private var allResults: [BreweryItem] = []
-    private(set) var isShowingAll = false
+    @Published private(set) var isShowingAll = false
 
     init(service: BreweryItemDataLoader, store: BreweryItemsStore) {
         self.service = service
@@ -24,7 +24,7 @@ final class BreweryViewModel: ObservableObject {
     func fetch(query: String? = nil) {
         guard let query = query, !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             DispatchQueue.main.async {
-                self.state = .loadedList(nil)
+                self.state = .loadedList([])
                 self.allResults = []
                 self.isShowingAll = false
             }
@@ -88,7 +88,7 @@ final class BreweryViewModel: ObservableObject {
 
     enum State {
         case loadingList
-        case loadedList([BreweryItem]?)
+        case loadedList([BreweryItem])
         case error(Error)
     }
 
