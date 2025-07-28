@@ -10,18 +10,25 @@ import SwiftUI
 struct BrewerySearchView: View {
     @ObservedObject var viewModel: BreweryViewModel
     @State private var query: String = ""
+    @State private var isNavigating = false
     
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 31) {
-                headerView
-                searchSection
-            }
-            .onAppear {
-                viewModel.send(event: .onAppear)
-            }
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 31) {
+                    headerView
+                    searchSection
+                }
+                .onAppear {
+                    viewModel.send(event: .onAppear)
+                }
+            }.background(Color.backgroundPrimary)
+                .navigationDestination(isPresented: $isNavigating) {
+                    if let selected = viewModel.selectedBrewery {
+                        DetailsView(item: selected)
+                    }
+                }
         }
-        .background(Color.backgroundPrimary)
     }
     
     private var headerView: some View {
@@ -44,13 +51,14 @@ struct BrewerySearchView: View {
             SearchBarView(query: $query) {
                 viewModel.fetch(query: query)
             }
-
             contentView
-
-            HistoryListView(history: viewModel.history)
-                .padding(.top, 41)
+            
+            HistoryListView(history: viewModel.history) { item in
+                viewModel.select(item)
+                isNavigating.toggle()
+            }.padding(.top, 41)
         }
-        .padding(.horizontal)
+        .padding(.horizontal, Spacing.largeMedium)
     }
     
     @ViewBuilder

@@ -10,7 +10,8 @@ import SwiftUI
 
 struct HistoryListView: View {
     let history: [(BreweryItem, Date)]
-    
+    let onSelect: (BreweryItem) -> Void
+
     @ViewBuilder
     var body: some View {
         if history.isEmpty {
@@ -22,7 +23,12 @@ struct HistoryListView: View {
                         .applyTextStyle(.headlineBold16, color: Color.primaryContent)
                     
                     ForEach(history, id: \.0.id) { brewery, date in
-                        HistoryItemView(brewery: brewery, date: date)
+                        Button(action: {
+                            onSelect(brewery)
+                        }, label: {
+                            HistoryItemView(brewery: brewery, date: date)
+                        })
+                        CellDivider()
                     }
                 }
             }
@@ -43,6 +49,9 @@ private struct HistoryItemView: View {
                     .applyTextStyle(.bodyRegular13, color: Color.secondaryContent)
             }
             Spacer()
+            Image(systemName: "chevron.right")
+                .renderingMode(.template)
+                .foregroundColor(Color.primaryContent)
         }
     }
 }

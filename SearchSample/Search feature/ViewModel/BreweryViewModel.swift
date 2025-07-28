@@ -10,6 +10,7 @@ import Foundation
 final class BreweryViewModel: ObservableObject {
     @Published private(set) var state = State.loadingList
     @Published var history: [(BreweryItem, Date)] = []
+    @Published var selectedBrewery: BreweryItem?
     
     private let service: BreweryItemDataLoader
     private let store: BreweryItemsStore
@@ -125,5 +126,9 @@ final class BreweryViewModel: ObservableObject {
                 self.isShowingAll = true
             }
         }
+    }
+    
+    func select(_ item: BreweryItem) {
+        selectedBrewery = item
     }
 }
