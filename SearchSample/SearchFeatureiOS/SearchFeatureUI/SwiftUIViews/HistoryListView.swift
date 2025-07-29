@@ -44,6 +44,7 @@ private struct HistoryItemView: View {
             VStack(alignment: .leading, spacing: Spacing.small) {
                 Text(brewery.name)
                     .applyTextStyle(.bodyRegular16, color: Color.primaryContent)
+                    .multilineTextAlignment(.leading)
                 Text(date.formatted(date: .numeric, time: .shortened))
                     .applyTextStyle(.bodyRegular13, color: Color.secondaryContent)
             }
