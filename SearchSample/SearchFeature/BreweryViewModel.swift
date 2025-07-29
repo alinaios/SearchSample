@@ -22,7 +22,7 @@ public final class BreweryViewModel: ObservableObject {
     private var allResults: [BreweryItem] = []
     private(set) var isShowingAll = false
 
-    // MARK: - Initialization
+    // MARK: - Initialisation
 
     public init(service: BreweryItemDataLoader, store: BreweryItemsStore) {
         self.service = service

@@ -93,8 +93,3 @@ struct BrewerySearchView: View {
         }
     }
 }
-#Preview {
-    BrewerySearchView(viewModel: .init(service: MockBreweryService(),
-                                       store: MockBreweryItemsStore()))
-}
-
