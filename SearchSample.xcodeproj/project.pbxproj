@@ -49,10 +49,10 @@
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = E0C233702E34C81A0003DC7D /* Sources */;
 			membershipExceptions = (
-				"Presentation/DesignSystem/Poppins-Bold.ttf",
-				"Presentation/DesignSystem/Poppins-Medium.ttf",
-				"Presentation/DesignSystem/Poppins-Regular.ttf",
-				"Presentation/DesignSystem/Poppins-SemiBold.ttf",
+				"SearchFeatureiOS/DesignSystem/Poppins-Bold.ttf",
+				"SearchFeatureiOS/DesignSystem/Poppins-Medium.ttf",
+				"SearchFeatureiOS/DesignSystem/Poppins-Regular.ttf",
+				"SearchFeatureiOS/DesignSystem/Poppins-SemiBold.ttf",
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */

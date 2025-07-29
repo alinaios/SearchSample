@@ -5,7 +5,6 @@
 //  Created by AH on 2025-07-27.
 //
 
-
 import SwiftUI
 
 struct HistoryListView: View {

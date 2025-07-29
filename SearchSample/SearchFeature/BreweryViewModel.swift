@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class BreweryViewModel: ObservableObject {
+final public class BreweryViewModel: ObservableObject {
     @Published private(set) var state = State.loadingList
     @Published var history: [(BreweryItem, Date)] = []
     @Published var selectedBrewery: BreweryItem?
@@ -17,12 +17,12 @@ final class BreweryViewModel: ObservableObject {
     private var allResults: [BreweryItem] = []
     private(set) var isShowingAll = false
     
-    init(service: BreweryItemDataLoader, store: BreweryItemsStore) {
+    public init(service: BreweryItemDataLoader, store: BreweryItemsStore) {
         self.service = service
         self.store = store
     }
     
-    func fetch(query: String? = nil) {
+    public func fetch(query: String? = nil) {
         guard let query = isValidQuery(query) else {
             state = .noQuery
             allResults = []
@@ -42,12 +42,12 @@ final class BreweryViewModel: ObservableObject {
         }
     }
     
-    func showAllResults() {
+    public func showAllResults() {
         state = .loadedList(allResults)
         isShowingAll = true
     }
     
-    func insertToStore(_ item: BreweryItem) {
+    public func insertToStore(_ item: BreweryItem) {
         do {
             try store.insert([item], timestamp: Date())
             if !history.contains(where: { $0.0.id == item.id }) {
@@ -58,7 +58,7 @@ final class BreweryViewModel: ObservableObject {
         }
     }
     
-    func loadHistory() {
+    public func loadHistory() {
         do {
             if let cached = try store.retrieve() {
                 let sorted = cached.feed.map { ($0, cached.timestamp) }
@@ -72,7 +72,7 @@ final class BreweryViewModel: ObservableObject {
         }
     }
     
-    func send(event: Event) {
+    public func send(event: Event) {
         switch event {
         case .onAppear:
             loadHistory()
@@ -80,7 +80,7 @@ final class BreweryViewModel: ObservableObject {
         }
     }
     
-    enum State {
+    public enum State {
         case loadingList
         case loadedList([BreweryItem])
         case noResults(String)
@@ -88,7 +88,7 @@ final class BreweryViewModel: ObservableObject {
         case error(String)
     }
     
-    enum Event {
+    public enum Event {
         case onAppear
     }
     
@@ -113,7 +113,6 @@ final class BreweryViewModel: ObservableObject {
         return trimmed
     }
     
-    
     private func updateState(for items: [BreweryItem]) {
         DispatchQueue.main.async {
             if items.isEmpty {
@@ -128,7 +127,7 @@ final class BreweryViewModel: ObservableObject {
         }
     }
     
-    func select(_ item: BreweryItem) {
+    public func select(_ item: BreweryItem) {
         selectedBrewery = item
     }
 }
