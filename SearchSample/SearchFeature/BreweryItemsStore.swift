@@ -10,7 +10,6 @@ import Foundation
 public typealias CachedFeed = (feed: [BreweryItem], timestamp: Date)
 
 public protocol BreweryItemsStore {
-    func deleteCachedFeed() throws
     func insert(_ feed: [BreweryItem], timestamp: Date) throws
     func retrieve() throws -> CachedFeed?
 }

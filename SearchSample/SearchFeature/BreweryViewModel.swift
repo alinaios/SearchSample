@@ -7,46 +7,53 @@
 
 import Foundation
 
-final public class BreweryViewModel: ObservableObject {
+@MainActor
+public final class BreweryViewModel: ObservableObject {
+    // MARK: - Published Properties
+
     @Published private(set) var state = State.loadingList
     @Published var history: [(BreweryItem, Date)] = []
     @Published var selectedBrewery: BreweryItem?
-    
+
+    // MARK: - Private Properties
+
     private let service: BreweryItemDataLoader
     private let store: BreweryItemsStore
     private var allResults: [BreweryItem] = []
     private(set) var isShowingAll = false
-    
+
+    // MARK: - Initialization
+
     public init(service: BreweryItemDataLoader, store: BreweryItemsStore) {
         self.service = service
         self.store = store
     }
-    
-    public func fetch(query: String? = nil) {
-        guard let query = isValidQuery(query) else {
+
+    // MARK: - Public API
+
+    public func fetch(query: String? = nil) async {
+        guard let validatedQuery = isValidQuery(query) else {
             state = .noQuery
             allResults = []
             isShowingAll = false
             return
         }
-        
+
         state = .loadingList
-        service.load(query: query) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let items):
-                self.updateState(for: items)
-            case .failure(let error):
-                self.state = .error(self.errorMessage(from: error))
-            }
+
+        do {
+            let items = try await service.load(query: validatedQuery)
+            updateState(for: items)
+        } catch {
+            state = .error(errorMessage(from: error))
         }
     }
-    
+
     public func showAllResults() {
         state = .loadedList(allResults)
         isShowingAll = true
     }
-    
+
     public func insertToStore(_ item: BreweryItem) {
         do {
             try store.insert([item], timestamp: Date())
@@ -57,41 +64,54 @@ final public class BreweryViewModel: ObservableObject {
             print("Store error: \(error)")
         }
     }
-    
-    public func loadHistory() {
+
+    public func loadHistory() async {
         do {
             if let cached = try store.retrieve() {
-                let sorted = cached.feed.map { ($0, cached.timestamp) }
-                self.history = sorted.sorted { $0.1 > $1.1 }
+                let entries = cached.feed.map { ($0, cached.timestamp) }
+                history = entries.sorted { $0.1 > $1.1 }
             } else {
-                self.history = []
+                history = []
             }
         } catch {
             print("Failed to load history from store: \(error)")
-            self.history = []
+            history = []
         }
     }
-    
-    public func send(event: Event) {
+
+    public func send(event: Event) async {
         switch event {
         case .onAppear:
-            loadHistory()
-            fetch()
+            await loadHistory()
+            await fetch()
         }
     }
-    
-    public enum State {
-        case loadingList
-        case loadedList([BreweryItem])
-        case noResults(String)
-        case noQuery
-        case error(String)
+
+    public func select(_ item: BreweryItem) {
+        selectedBrewery = item
     }
-    
-    public enum Event {
-        case onAppear
+
+    // MARK: - Internal State Management
+
+    private func updateState(for items: [BreweryItem]) {
+        if items.isEmpty {
+            state = .noResults("No breweries found for your search.")
+            allResults = []
+            isShowingAll = false
+        } else {
+            allResults = Array(items.prefix(10))
+            state = .loadedList(Array(allResults.prefix(5)))
+            isShowingAll = true
+        }
     }
-    
+
+    private func isValidQuery(_ query: String?) -> String? {
+        guard let trimmed = query?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmed.isEmpty else {
+            return nil
+        }
+        return trimmed
+    }
+
     private func errorMessage(from error: Error) -> String {
         if let customError = error as? RemoteBreweryItemDataLoader.LoaderError {
             switch customError {
@@ -105,29 +125,18 @@ final public class BreweryViewModel: ObservableObject {
         }
         return "Something went wrong"
     }
-    
-    private func isValidQuery(_ query: String?) -> String? {
-        guard let trimmed = query?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmed.isEmpty else {
-            return nil
-        }
-        return trimmed
+
+    // MARK: - State & Events
+
+    public enum State {
+        case loadingList
+        case loadedList([BreweryItem])
+        case noResults(String)
+        case noQuery
+        case error(String)
     }
-    
-    private func updateState(for items: [BreweryItem]) {
-        DispatchQueue.main.async {
-            if items.isEmpty {
-                self.state = .noResults("No breweries found for your search.")
-                self.allResults = []
-                self.isShowingAll = false
-            } else {
-                self.allResults = Array(items.prefix(10))
-                self.state = .loadedList(Array(self.allResults.prefix(5)))
-                self.isShowingAll = true
-            }
-        }
-    }
-    
-    public func select(_ item: BreweryItem) {
-        selectedBrewery = item
+
+    public enum Event {
+        case onAppear
     }
 }

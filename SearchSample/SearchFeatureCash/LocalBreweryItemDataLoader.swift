@@ -14,22 +14,18 @@ public final class LocalBreweryItemDataLoader: BreweryItemDataLoader {
         self.context = context
     }
 
-    public func load(query: String?, completion: @escaping (SearchResult) -> Void) {
-        do {
-            let entities = try context.fetch(FetchDescriptor<BreweryItemEntity>())
-            let items = entities.map { entity in
-                BreweryItem(
-                    id: entity.id,
-                    name: entity.name,
-                    breweryType: entity.breweryType,
-                    city: entity.city,
-                    postalCode: entity.postalCode,
-                    country: entity.country
-                )
-            }
-            completion(.success(items))
-        } catch {
-            completion(.failure(error))
+    public func load(query: String?) async throws -> [BreweryItem] {
+        let entities = try context.fetch(FetchDescriptor<BreweryItemEntity>())
+        
+        return entities.map { entity in
+            BreweryItem(
+                id: entity.id,
+                name: entity.name,
+                breweryType: entity.breweryType,
+                city: entity.city,
+                postalCode: entity.postalCode,
+                country: entity.country
+            )
         }
     }
 }

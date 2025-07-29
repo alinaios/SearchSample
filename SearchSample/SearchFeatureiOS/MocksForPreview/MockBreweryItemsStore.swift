@@ -13,11 +13,7 @@ public final class MockBreweryItemsStore: BreweryItemsStore {
     public init(cachedFeed: CachedFeed? = nil) {
         self.cache = cachedFeed
     }
-
-    public func deleteCachedFeed() throws {
-        cache = nil
-    }
-
+    
     public func insert(_ feed: [BreweryItem], timestamp: Date) throws {
         cache = (feed: feed, timestamp: timestamp)
     }

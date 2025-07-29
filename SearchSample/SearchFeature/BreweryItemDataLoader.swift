@@ -8,7 +8,5 @@
 import Foundation
 
 public protocol BreweryItemDataLoader {
-    typealias SearchResult = Result<[BreweryItem], Error>
-    
-    func load(query: String?, completion: @escaping (SearchResult) -> Void)
+    func load(query: String?) async throws -> [BreweryItem]
 }

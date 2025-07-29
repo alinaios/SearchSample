@@ -8,51 +8,41 @@
 import Foundation
 
 public final class RemoteBreweryItemDataLoader: BreweryItemDataLoader {
-    public typealias Failure = LoaderError
-
-    private let url: URL
-    private let client: HTTPClient
-    
     public enum LoaderError: Swift.Error {
-           case connectivity
-           case invalidData
-           case invalidURL
-       }
-    
+        case connectivity
+        case invalidData
+        case invalidURL
+    }
+
+    private let baseURL: URL
+    private let client: HTTPClient
+
     public init(url: URL, client: HTTPClient) {
-        self.url = url
+        self.baseURL = url
         self.client = client
     }
     
-    public func load(query: String?, completion: @escaping (SearchResult) -> Void) {
+    public func load(query: String?) async throws -> [BreweryItem] {
         guard let finalURL = makeURL(with: query) else {
-            completion(.failure(LoaderError.invalidURL))
-            return
+            throw LoaderError.invalidURL
         }
-        
-        client.get(from: finalURL) { [weak self] response in
-            guard self != nil else { return }
 
-            switch response {
-            case let .success((data, response)):
-                do {
-                    let items = try BreweryItemsMapper.map(data, from: response)
-                    completion(.success(items))
-                } catch {
-                    completion(.failure(LoaderError.invalidData))
-                }
-
-            case .failure:
-                completion(.failure(LoaderError.connectivity))
-            }
+        do {
+            let (data, response) = try await client.get(from: finalURL)
+            return try BreweryItemsMapper.map(data, from: response)
+        } catch is BreweryItemsMapper.Error {
+            throw LoaderError.invalidData
+        } catch {
+            throw LoaderError.connectivity
         }
     }
+
     
     private func makeURL(with query: String?) -> URL? {
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
         var queryItems = components?.queryItems ?? []
 
-        if let query, !query.isEmpty {
+        if let query, !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             queryItems.append(URLQueryItem(name: "query", value: query))
         }
 

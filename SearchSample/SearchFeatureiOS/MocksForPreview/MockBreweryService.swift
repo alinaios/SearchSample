@@ -8,8 +8,10 @@
 import Foundation
 
 public final class MockBreweryService: BreweryItemDataLoader {
-    public func load(query: String?, completion: @escaping (SearchResult) -> Void) {
-        let items = [
+    public init() {}
+
+    public func load(query: String?) async throws -> [BreweryItem] {
+        return [
             BreweryItem(
                 id: UUID(),
                 name: "Mock Brewing Co.",
@@ -27,9 +29,5 @@ public final class MockBreweryService: BreweryItemDataLoader {
                 country: "Testonia"
             )
         ]
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            completion(.success(items))
-        }
     }
 }

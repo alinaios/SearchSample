@@ -1,5 +1,5 @@
 //
-//  SwiftDataBreweryItemsStore.swift
+//  LocalBreweryItemsStore.swift
 //  SearchSample
 //
 //  Created by AH on 2025-07-27.
@@ -8,15 +8,11 @@
 import Foundation
 import SwiftData
 
-public final class SwiftDataBreweryItemsStore: BreweryItemsStore {
+public final class LocalBreweryItemsStore: BreweryItemsStore {
     private let context: ModelContext
 
     public init(context: ModelContext) {
         self.context = context
-    }
-
-    public func deleteCachedFeed() throws {
-        try deleteAll(BreweryItemEntity.self)
     }
 
     public func insert(_ feed: [BreweryItem], timestamp: Date) throws {
@@ -69,14 +65,5 @@ public final class SwiftDataBreweryItemsStore: BreweryItemsStore {
             feed: uniqueItems.map { $0.toModel() },
             timestamp: uniqueItems.first?.timestamp ?? .distantPast
         )
-    }
-
-    // MARK: - Helpers
-
-    private func deleteAll<T: PersistentModel>(_ type: T.Type) throws {
-        let items = try context.fetch(FetchDescriptor<T>())
-        for item in items {
-            context.delete(item)
-        }
     }
 }

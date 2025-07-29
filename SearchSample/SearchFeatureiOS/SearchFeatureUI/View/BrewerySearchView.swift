@@ -20,7 +20,9 @@ struct BrewerySearchView: View {
                     searchSection
                 }
                 .onAppear {
-                    viewModel.send(event: .onAppear)
+                    Task {
+                        await viewModel.send(event: .onAppear)
+                    }
                 }
             }.background(Color.backgroundPrimary)
                 .navigationDestination(isPresented: $isNavigating) {
@@ -49,7 +51,9 @@ struct BrewerySearchView: View {
     private var searchSection: some View {
         VStack(alignment: .leading, spacing: Spacing.medium) {
             SearchBarView(query: $query) {
-                viewModel.fetch(query: query)
+                Task {
+                    await viewModel.fetch(query: query)
+                }
             }
             contentView
             

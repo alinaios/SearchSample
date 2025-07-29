@@ -28,7 +28,7 @@ struct SearchSampleApp: App {
 
         let client = URLSessionHTTPClient(session: .shared)
         self.service = RemoteBreweryItemDataLoader(url: url, client: client)
-        self.store = SwiftDataBreweryItemsStore(context: context)
+        self.store = LocalBreweryItemsStore(context: context)
     }
 
     var body: some Scene {
