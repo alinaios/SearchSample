@@ -4,11 +4,11 @@ The **SearchSample** project is built with modularity and flexibility in mind. I
 
 ---
 
-- [**Endpoint**] (https://api.openbrewerydb.org/v1/breweries/search?query=sample)
+- [**Endpoint**](https://api.openbrewerydb.org/v1/breweries/search?query=sample)
 
 ---
 
-- [**FIGMA Design**] (https://www.figma.com/design/4FGFIDr1xZVpO1Fr3SFOx4/Untitled?node-id=0-1&m=dev&t=cxovaN2pAAI2RrWd-1)
+- [**FIGMA Design**](https://www.figma.com/design/4FGFIDr1xZVpO1Fr3SFOx4/Untitled?node-id=0-1&m=dev&t=cxovaN2pAAI2RrWd-1)
 
 ---
 
@@ -44,7 +44,7 @@ SearchSample is made up of the following components:
 
 ---
 
-## [Flow Chart](https://docs.google.com/document/d/1-pWnOQf_OAxln_FOGvzy_XcgY_TTnej4uOH7b6qrysE/edit?tab=t.y5i5vabngnw5#heading=h.k9o9xovoq9ol))
+## [Flow Chart](https://docs.google.com/document/d/1-pWnOQf_OAxln_FOGvzy_XcgY_TTnej4uOH7b6qrysE/edit?tab=t.y5i5vabngnw5#heading=h.k9o9xovoq9ol)
 
 ---
 
@@ -56,7 +56,7 @@ SearchSample is made up of the following components:
 
 ---
 
-## 📁 Folder Structure (Optional)
+## 📁 Folder Structure 
 
 ```plaintext
 SearchSample/
